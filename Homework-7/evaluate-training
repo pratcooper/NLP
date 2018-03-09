@@ -1,0 +1,267 @@
+#!/usr/bin/env python
+import argparse, sys # optparse is deprecated
+from itertools import islice # slicing for iterators
+import nltk # this is for training
+from nltk.stem import porter # use the porter stemmer
+from nltk.classify import MaxentClassifier # Maximum entropy classifier
+from sklearn.svm import LinearSVC , SVC
+from textstat.textstat import textstat
+#nltk.config_megam('./megam_0.92/')
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+import string
+
+
+tfidf_vectorizer=TfidfVectorizer()
+stemmer = nltk.stem.porter.PorterStemmer()
+remove_punctuation_map = dict((ord(char), None) for char in string.punctuation)
+
+def stem_tokens(tokens):
+    return [stemmer.stem(item) for item in tokens]
+
+def stem(sent):
+    porterstemmer = porter.PorterStemmer()
+    return [porterstemmer.stem(w.lower()) for w in sent]
+
+def normalize(text):
+    return stem_tokens(nltk.word_tokenize(text.lower().translate(remove_punctuation_map)))
+
+vectorizer = TfidfVectorizer(tokenizer=normalize)
+
+def cosine_sim(text1, text2):
+    tfidf = vectorizer.fit_transform([text1, text2])
+    return ((tfidf * tfidf.T).A)[0,1]
+
+def ngram(sent, gramcount = 1):
+    if gramcount < 1:
+        raise Exception("Must be at least unigrams")
+    return [tuple(sent[i:i + gramcount]) for i in range(0, len(sent) - gramcount + 1)]
+
+def intersection(h, ref):
+   refmap = {}
+   for word in ref:
+       if word in refmap:
+           refmap[word] += 1
+       else:
+           refmap[word] = 1
+   i = 0
+   for run in h:
+       if run in refmap and refmap[run] > 0:
+          i += 1
+          refmap[run] -= 1
+   return i
+
+def score (h, ref):
+    alpha = 0.9
+    m = intersection(h, ref)
+    if len(ref) == 0 or len(h) == 0:
+        # no reference
+        return 0, 0
+    P, R = float(m)/len(h), float(m)/len(ref)
+    return P, R
+    
+def chunkcalc(h, ref):
+    # recursively calculates chunkings
+    if len(h) == 0:
+        return 0
+    allMatches = []
+    for i in range(1, len(h) + 1):
+        foundMatch = False
+        currsrc = tuple(h[0:i])
+        for j in range(0, len(ref)):
+            if tuple(ref[j:j+i]) == currsrc:
+                allMatches.append((i, j))
+                foundMatch = True
+        if not foundMatch:
+            break;
+    if len(allMatches) == 0:
+        return 0 + chunkcalc(h[1:], ref)
+    # find best matches
+    sm = sorted(allMatches)
+    iref, jref = sm[-1]
+    smatches = [(i,j) for i,j in allMatches if i == iref]
+    if iref == 1:
+        smatches = smatches[0:1]
+    scores = [(chunkcalc(h[i:], ref[0:j] + [None] + ref[j+i:])) for i, j in smatches]
+    return 1 + sorted(scores)[0]
+
+def xscore (h, ref):
+    alpha = 0.9
+    if len(h) == 0 or len(ref) == 0:
+        print h, ref
+    m = intersection(h, ref)
+    mu = m
+    c = chunkcalc(h[:], ref[:])
+    P, R = (float(mu))/(len(h)), (float(mu))/(len(ref))
+    score = P * R / (1 - alpha) * R + alpha * P
+    penalty = 0.5 * ((float(c) / (m + 0.00001)) ** 3)
+    return (1 - penalty) * score
+
+def cal_precision(h, ref):
+    matches = intersection(h, ref)
+    size_of_h = len(h)
+    if matches == 0:
+        matches = 0.1
+    prec = matches / float(size_of_h)
+    return prec
+
+
+def cal_recall(h, ref):
+    matches = intersection(h, ref)
+    size_of_ref = len(ref)
+    if matches == 0:
+        matches = 0.1
+    recall = matches / float(size_of_ref)
+    return recall
+
+def cal_meteor_formula(h, ref):
+    alpha = 0.9
+    m = intersection(h, ref)
+    if len(h) == 0 or len(ref) == 0:
+        return 0
+    precision = cal_precision(h, ref)
+    recall = cal_recall(h, ref)
+    num = precision * recall
+    deno = (1 - alpha) * recall + alpha * precision
+    res = num / float(deno)
+    return res
+
+def my_lcs(string, sub):
+    if(len(string)< len(sub)):
+        sub, string = string, sub
+    lengths = [[0 for i in range(0,len(sub)+1)] for j in range(0,len(string)+1)]
+    for j in range(1,len(sub)+1):
+        for i in range(1,len(string)+1):
+            if(string[i-1] == sub[j-1]):
+                lengths[i][j] = lengths[i-1][j-1] + 1
+            else:
+                lengths[i][j] = max(lengths[i-1][j] , lengths[i][j-1])
+    return lengths[len(string)][len(sub)]
+
+def calc_rogue_score(hyp, ref):
+        prec_max = 0.0
+        rec_max = 0.0
+        beta = 1.2
+        lcs = my_lcs(hyp, ref)
+        prec_max = lcs/float(len(hyp))
+        rec_max = lcs/float(len(ref))
+        if (prec_max != 0 and rec_max != 0):
+            score = ((1 + beta ** 2) * prec_max * rec_max) / float(rec_max + beta ** 2 * prec_max)
+        else:
+            score = 0.0
+
+        return score
+
+
+def create_features(h, ref):
+    features = {}
+
+    h_score = cal_meteor_formula(stem(h), stem(ref))
+    h_score2 = cal_meteor_formula(ngram(stem(h), 2), ngram(stem(ref), 2))
+    h_score3 = cal_meteor_formula(ngram(stem(h), 3), ngram(stem(ref), 3))
+
+    h_score_final = h_score + h_score2 + h_score3
+
+    features["meteor_score_final"] = float(h_score_final)
+
+    P1, R1 = score(h, ref);
+    P2, R2 = score(ngram(h, 2), ngram(ref, 2));
+    P3, R3 = score(ngram(h, 3), ngram(ref, 3));
+    P4, R4 = score(ngram(h, 4), ngram(ref, 4))
+    features["xscore"] = xscore(h, ref)
+    features["precision1gram"] = P1
+    features["precision2gram"] = P2
+    features["precision3gram"] = P3
+    features["precision4gram"] = P4
+
+    features["recall1gram"] = R1
+    features["recall2gram"] = R2
+    features["recall3gram"] = R3
+    features["recall4gram"] = R4
+
+    # also add features of stemmed data
+    hs, refs = stem(h), stem(ref)
+    P1s, R1s = score(hs, refs);
+    P2s, R2s = score(ngram(hs, 2), ngram(refs, 2));
+    P3s, R3s = score(ngram(hs, 3), ngram(refs, 3));
+    P4s, R4s = score(ngram(hs, 4), ngram(refs, 4))
+
+    features["sxscore"] = xscore(hs, refs)
+    features["sprecision1gram"] = P1s
+    features["sprecision2gram"] = P2s
+    features["sprecision3gram"] = P3s
+    features["sprecision4gram"] = P4s
+
+    features["srecall1gram"] = R1s
+    features["srecall2gram"] = R2s
+    features["srecall3gram"] = R3s
+    features["srecall4gram"] = R4s
+    features["wordcountratio"] = float(len(h)) / len(ref)
+
+    h_rogue_final = calc_rogue_score(h, ref)
+
+    features["rogue_score_final"] = float(h_rogue_final)
+
+    hyp = ' '.join(word for word in h)
+    features["SMOG_Score"] = float(textstat.smog_index(hyp))
+    refer = ' '.join(word for word in ref)
+    cosine = cosine_sim(hyp, refer)
+
+    features["Cosine"] = float(cosine)
+
+    return features
+    
+def main():
+    #classifier code
+    parser = argparse.ArgumentParser(description='Evaluate translation hypotheses.')
+    parser.add_argument('-i', '--input', default='data/test-ref15k',
+            help='input file (default data/test-ref15k)')
+    parser.add_argument('-t', '--training', default='data/train-ref35k',
+            help='input file (default data/train-ref35k)')
+    parser.add_argument('-a', '--traininganswers', default='data/train-answers35k',
+            help='input file (default data/train-answers35k)')
+    parser.add_argument('-n', '--num_sentences', default=None, type=int,
+            help='Number of hypothesis pairs to evaluate')
+    opts = parser.parse_args()
+
+    def sentences():
+        with open(opts.input) as f:
+            for pair in f:
+                yield [sentence.strip().split() for sentence in pair.decode('utf8').split(' ||| ')]
+    # create the training data
+    def train():
+        with open(opts.training) as f:
+            with open(opts.traininganswers) as g:
+                for answ in g:
+                    pair = f.readline()
+                    label_raw = int(answ.strip())
+                    label_h1 = label_raw
+                    label_h2 = - label_raw
+                    sentences = [sentence.strip().split() for sentence in pair.decode('utf8').split(' ||| ')]
+                    yield (create_features(sentences[0], sentences[2]), label_h1)
+                    yield (create_features(sentences[1], sentences[2]), label_h2)
+    # train the classifier
+    data = [train for train in train()]
+    #print(data)
+
+    #classifier = nltk.NaiveBayesClassifier.train(data)
+    classifier = nltk.classify.SklearnClassifier(SVC(kernel='linear',probability=True))
+    classifier.train(data)
+
+    # note: the -n option does not work in the original code
+    for h1, h2, ref in islice(sentences(), opts.num_sentences):
+        cl1 = classifier.prob_classify(create_features(h1, ref))
+        ppos1, pneg1, pzero1 = cl1.prob(1), cl1.prob(-1), cl1.prob(0)
+        cl2 = classifier.prob_classify(create_features(h2, ref))
+        ppos2, pneg2, pzero2 = cl2.prob(1), cl2.prob(-1), cl2.prob(0)
+        rp, rz, rn = ppos1 > ppos2, pzero1 > pzero2, pneg1 > pneg2
+        h1_match = (1 if rp else 0) + (0.5 if rz else 0) + (-1 if rn else 0)
+        h2_match = (1 if not rp else 0) + (0.5 if not rz else 0) + (-1 if not rn else 0)
+
+        print(1 if h1_match > h2_match else # \begin{cases}
+                (0 if h1_match == h2_match
+                    else -1)) # \end{cases}
+ 
+# convention to allow import of this file as a module
+if __name__ == '__main__':
+    main()

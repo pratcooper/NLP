@@ -1,0 +1,7 @@
+Instructions on how to run code :
+
+1) run tp.py on hyp1-hyp2-ref and dev.answers
+2) It will create following files : train-ref35k , test-ref15k , train-answers35k , test-answers15k
+3) Code will be run on training files to avoid overfitting.
+4) run following command to generate output file : python2.7 evaluate-training > eval.out
+5) Code will take time to run as its using SVM classifier.

@@ -1,0 +1,110 @@
+#!/usr/bin/env python
+import argparse # optparse is deprecated
+from itertools import islice # slicing for iterators
+from nltk.stem import porter
+
+def ngram(sent, gramcount=1):
+    if gramcount < 1:
+        raise Exception("Must be at least unigrams")
+    return [tuple(sent[i:i + gramcount]) for i in range(0, len(sent) - gramcount + 1)]
+
+
+def stem(sent):
+    porterstemmer = porter.PorterStemmer()
+    return [porterstemmer.stem(w.decode("utf8").lower()) for w in sent]
+
+def cal_precision(h,ref):
+    matches = intersection(h,ref)
+    size_of_h = len(h)
+    if matches == 0:
+        matches = 0.1
+    prec = matches/float(size_of_h)
+    #print("In prec")
+    #print("Matches:" , matches)
+    return prec
+
+def cal_recall(h,ref):
+    matches = intersection(h,ref)
+    size_of_ref = len(ref)
+    if matches == 0:
+        matches = 0.1
+    recall = matches/float(size_of_ref)
+    #print("In recall")
+    #print("Matches:", matches)
+    return recall
+
+def cal_meteor_formula(h,ref):
+    alpha = 0.9
+    m = intersection(h, ref)
+    if len(h) == 0 or len(ref) == 0:
+        return 0
+    precision = cal_precision(h,ref)
+    recall = cal_recall(h,ref)
+
+    num = precision*recall
+    #print("RECALL :" , recall)
+    #print("PRECISION :" , precision)
+    deno = (1 - alpha)*recall + alpha*precision
+    res = num/float(deno)
+    return res
+
+def intersection(h, ref):
+    refmap = {}
+    for word in ref:
+        if word in refmap:
+            refmap[word] += 1
+        else:
+            refmap[word] = 1
+    i = 0
+    for run in h:
+        if run in refmap and refmap[run] > 0:
+            i += 1
+            refmap[run] -= 1
+    return i
+
+def word_matches(h, ref):
+    return sum(1 for w in h if w in ref)
+ 
+def main():
+    parser = argparse.ArgumentParser(description='Evaluate translation hypotheses.')
+    parser.add_argument('-i', '--input', default='data/hyp1-hyp2-ref',
+            help='input file (default data/hyp1-hyp2-ref)')
+    parser.add_argument('-n', '--num_sentences', default=None, type=int,
+            help='Number of hypothesis pairs to evaluate')
+    # note that if x == [1, 2, 3], then x[:None] == x[:] == x (copy); no need for sys.maxint
+    opts = parser.parse_args()
+ 
+    # we create a generator and avoid loading all sentences into a list
+    def sentences():
+        with open(opts.input) as f:
+            for pair in f:
+                yield [sentence.strip().split() for sentence in pair.split(' ||| ')]
+ 
+    # note: the -n option does not work in the original code
+    for h1, h2, ref in islice(sentences(), opts.num_sentences):
+        # rset = set(ref)
+        # h1_match = word_matches(h1, rset)
+        # h2_match = word_matches(h2, rset)
+        # print(1 if h1_match > h2_match else # \begin{cases}
+        #         (0 if h1_match == h2_match
+        #             else -1)) # \end{cases}
+
+        h1_score = cal_meteor_formula(stem(h1), stem(ref))
+        h2_score = cal_meteor_formula(stem(h2), stem(ref))
+
+        h1_score2 = cal_meteor_formula(ngram(stem(h1), 2), ngram(stem(ref), 2))
+        h2_score2 = cal_meteor_formula(ngram(stem(h2), 2), ngram(stem(ref), 2))
+
+        h1_score3 = cal_meteor_formula(ngram(stem(h1), 3), ngram(stem(ref), 3))
+        h2_score3 = cal_meteor_formula(ngram(stem(h2), 3), ngram(stem(ref), 3))
+
+        h1_score = h1_score + h1_score2 + h1_score3
+        h2_score = h2_score + h2_score2 + h2_score3
+
+        print(1 if h1_score > h2_score else # \begin{cases}
+                (0 if h1_score == h2_score
+                    else -1)) # \end{cases}
+
+# convention to allow import of this file as a module
+if __name__ == '__main__':
+    main()
