@@ -1,0 +1,30 @@
+#########Instructions on how to run code#############
+
+Files submitted :
+1) feat_gen.py
+2) tp.py
+
+Steps :
+
+1) For preprocessing tp.py file is used. It uses python pickle library to dump data onto a file on disk.
+all the lexicon files are read in current directory and then a dictionary is created which has key as file_name
+and values as set of unique words found in that file.
+
+Run command : Python tp.py
+Output file generated : save.p (in current directory)
+
+2) save.p file contains the dictionary created in tp.py file. Now this dictionary is loaded into python
+dictionary variable favourite_color in feat_gen.py file.
+
+3) With Lexicons I also used external data files which had words related to entity class in our problem
+   whcih helped me improve accuracy.
+
+4) Some external files were used for noise reduction purpose in preprocessing as mentioned in Q1.1.
+
+5) feat_gen file contains implementaion for all features for CRF tagger as well as logistic regression.
+
+6) Hyperparameters from struct_perceptron.py and tagger.py were changed during experimentation
+   which resulted in high accuracy.
+   Parameters :
+   1) effictive_learning  = 1.3 (default = 1.0)
+   2) nax_iter =  50 (default =  25)

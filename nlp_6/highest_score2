@@ -1,0 +1,396 @@
+[Executed at: Thu Nov 9 7:10:27 PST 2017]
+
+evaluating viterbi.py
+Passed(y) 100.0
+Passed(s) 100.0
+Results for dev
+processed 11537 tokens with 373 phrases; found: 246 phrases; correct: 149.
+accuracy: 96.18%; precision: 60.57%; recall: 39.95%; FB1: 48.14
+company: precision: 65.22%; recall: 41.67%; FB1: 50.85 23
+facility: precision: 59.09%; recall: 46.43%; FB1: 52.00 22
+geo-loc: precision: 66.67%; recall: 46.75%; FB1: 54.96 54
+movie: precision: 0.00%; recall: 0.00%; FB1: 0.00 2
+musicartist: precision: 50.00%; recall: 7.69%; FB1: 13.33 2
+other: precision: 50.00%; recall: 26.98%; FB1: 35.05 34
+person: precision: 63.44%; recall: 54.63%; FB1: 58.71 93
+product: precision: 57.14%; recall: 21.05%; FB1: 30.77 7
+sportsteam: precision: 60.00%; recall: 27.27%; FB1: 37.50 5
+tvshow: precision: 25.00%; recall: 9.09%; FB1: 13.33 4
+Results for dev_test
+processed 11308 tokens with 644 phrases; found: 404 phrases; correct: 181.
+accuracy: 91.87%; precision: 44.80%; recall: 28.11%; FB1: 34.54
+company: precision: 51.52%; recall: 15.60%; FB1: 23.94 33
+facility: precision: 47.37%; recall: 39.13%; FB1: 42.86 38
+geo-loc: precision: 64.71%; recall: 55.35%; FB1: 59.66 136
+movie: precision: 0.00%; recall: 0.00%; FB1: 0.00 1
+musicartist: precision: 0.00%; recall: 0.00%; FB1: 0.00 1
+other: precision: 17.95%; recall: 5.93%; FB1: 8.92 39
+person: precision: 39.37%; recall: 52.08%; FB1: 44.84 127
+product: precision: 0.00%; recall: 0.00%; FB1: 0.00 11
+sportsteam: precision: 7.14%; recall: 3.23%; FB1: 4.44 14
+tvshow: precision: 0.00%; recall: 0.00%; FB1: 0.00 4
+Results for test
+accuracy: 91.42%; precision: 38.95%; recall: 25.66%; FB1: 30.94
+
+
+### Train evaluation; writing to ./twitter_train.ner.pred
+Token-wise accuracy 99.9312950876
+Token-wise F1 (macro) 99.4460785522
+Token-wise F1 (micro) 99.9312950876
+Sentence-wise accuracy 99.2239467849
+               precision    recall  f1-score   support
+
+    B-company       0.99      0.99      0.99       135
+   B-facility       1.00      0.99      0.99        76
+    B-geo-loc       1.00      0.99      1.00       199
+      B-movie       1.00      1.00      1.00        27
+B-musicartist       1.00      1.00      1.00        42
+      B-other       0.98      0.98      0.98       162
+     B-person       1.00      1.00      1.00       341
+    B-product       1.00      0.99      0.99        78
+ B-sportsteam       1.00      1.00      1.00        40
+     B-tvshow       1.00      1.00      1.00        23
+    I-company       0.97      1.00      0.98        29
+   I-facility       1.00      0.99      0.99        76
+    I-geo-loc       1.00      1.00      1.00        35
+      I-movie       1.00      1.00      1.00        35
+I-musicartist       1.00      1.00      1.00        46
+      I-other       0.99      0.97      0.98       239
+     I-person       1.00      1.00      1.00       154
+    I-product       1.00      1.00      1.00        64
+ I-sportsteam       0.95      1.00      0.97        19
+     I-tvshow       1.00      1.00      1.00        21
+            O       1.00      1.00      1.00     33091
+
+  avg / total       1.00      1.00      1.00     34932
+
+### evaluation of data/twitter_dev.ner; writing to ./twitter_dev.ner.pred
+Token-wise accuracy 96.1775158187
+Token-wise F1 (macro) 34.9700995468
+Token-wise F1 (micro) 96.1775158187
+Sentence-wise accuracy 69.8305084746
+               precision    recall  f1-score   support
+
+    B-company       0.65      0.42      0.51        36
+   B-facility       0.70      0.50      0.58        28
+    B-geo-loc       0.70      0.49      0.58        77
+      B-movie       0.00      0.00      0.00         7
+B-musicartist       0.50      0.08      0.13        13
+      B-other       0.50      0.27      0.35        63
+     B-person       0.69      0.58      0.63       108
+    B-product       0.57      0.21      0.31        19
+ B-sportsteam       0.60      0.27      0.37        11
+     B-tvshow       0.25      0.09      0.13        11
+    I-company       0.00      0.00      0.00         7
+   I-facility       0.65      0.52      0.58        29
+    I-geo-loc       0.29      0.29      0.29        14
+      I-movie       0.00      0.00      0.00        11
+I-musicartist       0.67      0.13      0.22        15
+      I-other       0.58      0.27      0.37        81
+     I-person       0.83      0.57      0.68        61
+    I-product       0.83      0.31      0.45        16
+ I-sportsteam       0.00      0.00      0.00         4
+     I-tvshow       0.50      0.10      0.17        10
+            O       0.97      0.99      0.98     10916
+
+  avg / total       0.95      0.96      0.96     11537
+
+### evaluation of data/twitter_dev_test.ner; writing to ./twitter_dev_test.ner.pred
+Token-wise accuracy 91.8730102582
+Token-wise F1 (macro) 24.3325948028
+Token-wise F1 (micro) 91.8730102582
+Sentence-wise accuracy 52.2048364154
+               precision    recall  f1-score   support
+
+    B-company       0.52      0.16      0.24       109
+   B-facility       0.60      0.46      0.52        46
+    B-geo-loc       0.66      0.56      0.61       159
+      B-movie       0.00      0.00      0.00         4
+B-musicartist       0.00      0.00      0.00        33
+      B-other       0.24      0.08      0.12       118
+     B-person       0.43      0.56      0.48        96
+    B-product       0.18      0.05      0.07        44
+ B-sportsteam       0.08      0.03      0.05        31
+     B-tvshow       0.00      0.00      0.00         4
+    I-company       0.29      0.08      0.12        26
+   I-facility       0.59      0.38      0.46        60
+    I-geo-loc       0.60      0.68      0.63        37
+      I-movie       0.00      0.00      0.00        10
+I-musicartist       0.00      0.00      0.00        15
+      I-other       0.36      0.20      0.26       123
+
+     I-person       0.51      0.62      0.56        58
+    I-product       0.17      0.01      0.02        88
+ I-sportsteam       0.00      0.00      0.00         7
+     I-tvshow       0.00      0.00      0.00         9
+            O       0.95      0.99      0.97     10231
+
+  avg / total       0.89      0.92      0.90     11308
+
+### evaluation of twitter_test.ner; writing to ./twitter_test.ner.pred
+Token-wise accuracy 94.1027667984
+Token-wise F1 (macro) 4.61722849928
+Token-wise F1 (micro) 94.1027667984
+Sentence-wise accuracy 61.8048935494
+               precision    recall  f1-score   support
+
+    B-company       0.00      0.00      0.00         0
+   B-facility       0.00      0.00      0.00         0
+    B-geo-loc       0.00      0.00      0.00         0
+      B-movie       0.00      0.00      0.00         0
+B-musicartist       0.00      0.00      0.00         0
+      B-other       0.00      0.00      0.00         0
+     B-person       0.00      0.00      0.00         0
+    B-product       0.00      0.00      0.00         0
+ B-sportsteam       0.00      0.00      0.00         0
+     B-tvshow       0.00      0.00      0.00         0
+    I-company       0.00      0.00      0.00         0
+   I-facility       0.00      0.00      0.00         0
+    I-geo-loc       0.00      0.00      0.00         0
+      I-movie       0.00      0.00      0.00         0
+I-musicartist       0.00      0.00      0.00         0
+      I-other       0.00      0.00      0.00         0
+     I-person       0.00      0.00      0.00         0
+    I-product       0.00      0.00      0.00         0
+ I-sportsteam       0.00      0.00      0.00         0
+     I-tvshow       0.00      0.00      0.00         0
+            O       1.00      0.94      0.97     50600
+
+  avg / total       1.00      0.94      0.97     50600
+
+guest-wireless-upc-1604-10-120-067-240:nlp_6 prathameshnaik$
+guest-wireless-upc-1604-10-120-067-240:nlp_6 prathameshnaik$ perl data/conlleval.pl -d \\t < twitter_dev_test.ner.pred
+processed 11308 tokens with 644 phrases; found: 404 phrases; correct: 181.
+accuracy:  91.87%; precision:  44.80%; recall:  28.11%; FB1:  34.54
+          company: precision:  51.52%; recall:  15.60%; FB1:  23.94  33
+         facility: precision:  47.37%; recall:  39.13%; FB1:  42.86  38
+          geo-loc: precision:  64.71%; recall:  55.35%; FB1:  59.66  136
+            movie: precision:   0.00%; recall:   0.00%; FB1:   0.00  1
+      musicartist: precision:   0.00%; recall:   0.00%; FB1:   0.00  1
+            other: precision:  17.95%; recall:   5.93%; FB1:   8.92  39
+           person: precision:  39.37%; recall:  52.08%; FB1:  44.84  127
+          product: precision:   0.00%; recall:   0.00%; FB1:   0.00  11
+       sportsteam: precision:   7.14%; recall:   3.23%; FB1:   4.44  14
+           tvshow: precision:   0.00%; recall:   0.00%; FB1:   0.00  4
+
+
+This is code but run with 50 iteration :
+
+#!/bin/python
+
+import os
+import io
+import string
+import re
+import nltk
+import pickle
+from nltk.stem import PorterStemmer
+from nltk.tag.stanford import StanfordNERTagger
+from nltk.tokenize import word_tokenize
+
+
+ps = PorterStemmer()
+
+dict_processed = {}
+dict_file_word_map = {}
+
+favorite_color = pickle.load( open( "save.p", "rb" ) )
+
+
+def preprocess_corpus(train_sents):
+    """Use the sentences to do whatever preprocessing you think is suitable,
+    such as counts, keeping track of rare features/words to remove, matches to lexicons,
+    loading files, and so on. Avoid doing any of this in token2features, since
+    that will be called on every token of every sentence.
+
+    Of course, this is an optional function.
+
+    Note that you can also call token2features here to aggregate feature counts, etc.
+    """
+    set_words = set()
+
+    for sent in train_sents:
+        for i in xrange(len(sent)):
+            if sent[i] not in dict_processed:
+                dict_processed[sent[i]] = 1
+            else:
+                dict_processed[sent[i]] += 1
+            set_words.add(sent[i])
+
+
+    cwd = os.getcwd()
+    for filename in os.listdir(cwd + "/data/lexicon/"):
+        for word in set_words:
+            if word in io.open(cwd + "/data/lexicon/"+filename).read():
+                if word not in dict_file_word_map:
+                    li = []
+                    li.append(filename)
+                    dict_file_word_map[word] = li
+                else:
+                    dict_file_word_map[word].append(filename)
+        break
+
+
+    return dict_processed
+
+def token2features(sent, i,add_neighs = True):
+    """Compute the features of a token.
+
+    All the features are boolean, i.e. they appear or they do not. For the token,
+    you have to return a set of strings that represent the features that *fire*
+    for the token. See the code below.
+
+    The token is at position i, and the rest of the sentence is provided as well.
+    Try to make this efficient, since it is called on every token.
+
+    One thing to note is that it is only called once per token, i.e. we do not call
+    this function in the inner loops of training. So if your training is slow, it's
+    not because of how long it's taking to run this code. That said, if your number
+    of features is quite large, that will cause slowdowns for sure.
+
+    add_neighs is a parameter that allows us to use this function itself in order to
+    recursively add the same features, as computed for the neighbors. Of course, we do
+    not want to recurse on the neighbors again, and then it is set to False (see code).
+    """
+    ftrs = []
+    # bias
+    ftrs.append("BIAS")
+    # position features
+    if i == 0:
+        ftrs.append("SENT_BEGIN")
+    if i == len(sent)-1:
+        ftrs.append("SENT_END")
+
+    # the word itself
+    word = unicode(sent[i])
+    #word = ps.stem(word)
+
+    ftrs.append("WORD=" + word)
+    ftrs.append("LCASE=" + word.lower())
+    # some features of the word
+    if word.isalnum():
+        ftrs.append("IS_ALNUM")
+    if word.isnumeric():
+        ftrs.append("IS_NUMERIC")
+    if word.isdigit():
+        ftrs.append("IS_DIGIT")
+    if word.isupper():
+        ftrs.append("IS_UPPER")
+    if word.islower():
+        ftrs.append("IS_LOWER")
+
+    #############################
+    #word = nltk.word_tokenize(word)
+
+    # 1st feature
+    for k, v in favorite_color.iteritems():
+        if word in v:
+            ftrs.append("LEXICON_" + str(k) + "=TRUE")
+
+    #if word in (favorite_color['firstname.5k'] or favorite_color['firstname.10'] or favorite_color['firstname.100'] or favorite_color['firstname.500'] or favorite_color['firstname.1000'] or favorite_color['lastname.10'] or favorite_color['lastname.100'] or favorite_color['lastname.500'] or favorite_color['lastname.1000'] or favorite_color['lastname.5000'] or favorite_color['people.family_name'] or favorite_color['people.person'] or favorite_color['people.person.lastnames'] or favorite_color['people.person']):
+    #    ftrs.append("LEXICON=PERSON")
+    if word in (favorite_color['cap.10'] or favorite_color['cap.100'] or favorite_color['cap.500'] or favorite_color['location']or favorite_color['location.country']or favorite_color['venues']):
+        ftrs.append("LEXICON_LOCATION=TRUE")
+    if word in (favorite_color['english.stop'] or favorite_color['lower.100'] or favorite_color['lower.500'] or favorite_color['lower.1000']):
+        ftrs.append("LEXICON_OTHER=TRUE")
+    if word in (favorite_color['tv.tv_network'] or favorite_color['tv.tv_program'] or favorite_color['broadcast.tv_channel']):
+        ftrs.append("LEXICON_TVSHOW=TRUE")
+    if word in (favorite_color['sports.sports_team'] or favorite_color['sports.sports_league']):
+        ftrs.append("LEXICON_SPORTS=TRUE")
+    #if word in (favorite_color['product'] or favorite_color['business.consumer_company'] or favorite_color['business.consumer_product']):
+    #    ftrs.append("LEXICON=PRODUCT")
+
+
+    # 2nd feature
+    tag = nltk.pos_tag([word])[0][1]
+    ftrs.append("TAG=" + tag)
+
+    # 3rd feature
+    st = ""
+    for char in word:
+        if char.isupper():
+            st = st + 'X'
+        elif char.islower():
+            st = st + 'x'
+        elif char.isdigit():
+            st = st + 'd'
+
+    ftrs.append("WORD_SHAPE=" + st)
+
+    # 4th feature
+    if re.search(r'\d', word):
+        ftrs.append("HAS_DIGIT")
+
+    if "@" in word:
+        ftrs.append("CONTAINS_AT")
+
+    # 5th feature
+    if "#" in word:
+        ftrs.append("CONTAINS_HASH")
+
+    # 6th feature
+    if "-" in word:
+        ftrs.append("CONTAINS_HIPHEN")
+
+
+    #if "http" in word:
+    #    ftrs.append("IS_LINK")
+
+    #if word in dict_processed:
+    #    ftrs.append("COUNT_WORD=" + str(dict_processed[word]))
+    #if word in dict_file_word_map:
+    #    ftrs.append("LEX_LIST=" + str(dict_file_word_map[word]))
+
+    #if word[0].isupper():
+    #    ftrs.append("FIRST_UPPER=" + word[0])
+
+    cnt = 0
+    punc =False
+    for c in word:
+        if (c in "aeiou") or (c in "AEIOU"):
+            cnt += 1
+        if (c in string.punctuation):
+            punc=True
+
+    # 7th feature
+    ftrs.append("CONTAINS_PUNC=" + str(punc))
+
+    #ftrs.append("VOWEL_CNT=" + str(cnt))
+
+    # 8th feature
+    if len(word) >= 4:
+        prf = word[0] + word[1] + word[2]
+        ftrs.append("PREFIX=" +prf)
+    if len(word) >= 4:
+        sf = word[len(word)-3] + word[len(word)-2] + word[len(word)-1]
+        ftrs.append("SUFFIX=" +sf)
+
+    # 9th feature
+    ftrs.append("LENGTH="+ str(len(word)))
+
+    ftrs.append("LEMMA=" + ps.stem(word))
+
+    #######################################
+
+    # previous/next word feats
+    if add_neighs:
+        if i > 0:
+            for pf in token2features(sent, i-1,add_neighs = False):
+                ftrs.append("PREV_" + pf)
+        if i < len(sent)-1:
+            for pf in token2features(sent, i+1,add_neighs = False):
+                ftrs.append("NEXT_" + pf)
+
+    # return it!
+    return ftrs
+
+if __name__ == "__main__":
+    sents = [
+    [ "I","love", "food" ]
+    ]
+    preprocess_corpus(sents)
+    for sent in sents:
+        for i in xrange(len(sent)):
+            print sent[i], ":", token2features(sent, i)
+
+
